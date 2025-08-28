@@ -169,7 +169,7 @@ export default function AttendancePage() {
                 setShift("Morning");
                 setDate(new Date().toISOString().slice(0, 10));
               }}
-              className="text-sm text-slate-600 hover:underline"
+              className="text-sm text-slate-500 hover:underline"
             >
               Cancel
             </button>
@@ -187,7 +187,7 @@ export default function AttendancePage() {
                 type="date"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                className="mt-1 w-full border rounded-lg px-3 py-2"
+                className="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
                 required
               />
             </div>
@@ -197,12 +197,11 @@ export default function AttendancePage() {
               <select
                 value={shift}
                 onChange={(e) => setShift(e.target.value)}
-                className="mt-1 w-full border rounded-lg px-3 py-2"
+                className="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
               >
                 <option>Morning</option>
                 <option>Evening</option>
                 <option>Night</option>
-                <option>Remote</option>
               </select>
             </div>
           </div>
@@ -214,7 +213,7 @@ export default function AttendancePage() {
                 type="time"
                 value={start}
                 onChange={(e) => setStart(e.target.value)}
-                className="mt-1 w-full border rounded-lg px-3 py-2"
+                className="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
                 required
               />
             </div>
@@ -224,7 +223,7 @@ export default function AttendancePage() {
                 type="time"
                 value={end}
                 onChange={(e) => setEnd(e.target.value)}
-                className="mt-1 w-full border rounded-lg px-3 py-2"
+                className="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
                 required
               />
             </div>
@@ -240,7 +239,7 @@ export default function AttendancePage() {
                 min={0}
                 value={tasksDone}
                 onChange={(e) => setTasksDone(Number(e.target.value))}
-                className="mt-1 w-full border rounded-lg px-3 py-2"
+                className="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
               />
             </div>
             <div>
@@ -249,7 +248,7 @@ export default function AttendancePage() {
                 type="text"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className="mt-1 w-full border rounded-lg px-3 py-2"
+                className="mt-1 w-full border rounded-lg px-3 py-2 text-slate-500"
                 placeholder="e.g., blocked by API"
               />
             </div>
@@ -281,7 +280,7 @@ export default function AttendancePage() {
               type="date"
               value={filterFrom}
               onChange={(e) => setFilterFrom(e.target.value)}
-              className="mt-1 border rounded-lg px-3 py-2"
+              className="mt-1 border rounded-lg px-3 py-2 text-slate-500"
             />
           </div>
           <div>
@@ -290,7 +289,7 @@ export default function AttendancePage() {
               type="date"
               value={filterTo}
               onChange={(e) => setFilterTo(e.target.value)}
-              className="mt-1 border rounded-lg px-3 py-2"
+              className="mt-1 border rounded-lg px-3 py-2 text-slate-500"
             />
           </div>
           <button
@@ -349,7 +348,7 @@ export default function AttendancePage() {
               </thead>
               <tbody>
                 {filtered.map((a) => (
-                  <tr key={a.id} className="border-t">
+                  <tr key={a.id} className="border-t text-slate-500">
                     <td className="py-2">{a.date}</td>
                     <td className="py-2">{a.shift}</td>
                     <td className="py-2">{a.start}</td>
@@ -365,12 +364,7 @@ export default function AttendancePage() {
                         >
                           Edit
                         </button>
-                        <button
-                          onClick={() => handleDelete(a.id)}
-                          className="text-sm text-red-600 hover:underline"
-                        >
-                          Delete
-                        </button>
+                        
                       </div>
                     </td>
                   </tr>
