@@ -155,6 +155,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  FileText,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -249,6 +250,51 @@ export default function Sidebar({ role = "internee" }: SidebarProps) {
     label: "LogOut",
     href: "#",
     roles: ["teamlead"],
+    icon: LogOut,
+    logout: true,
+  },
+
+  {
+    label: "Dashboard",
+    href: "/hr",
+    roles: ["hr"],
+    icon: LayoutDashboard,
+  },
+  {
+    label: "View Employees",
+    href: "/hr/employees",
+    roles: ["hr"],
+    icon: User,
+  },
+  {
+    label: "Leave & Attendance",
+    href: "/hr/leaveattendance",
+    roles: ["hr"],
+    icon: FileText,
+  },
+  {
+    label: "Projects",
+    href: "/hr/projects",
+    roles: ["hr"],
+    icon: CheckSquare,
+  },
+   {
+    label: "Notifications",
+    href: "/hr/notifications",
+    roles: ["hr"],
+    icon: Bell,
+    badge: 3, // Example unread notifications
+  },
+  {
+    label: "Profile",
+    href: "/hr/profile",
+    roles: ["hr"],
+    icon: User,
+  },
+  {
+    label: "LogOut",
+    href: "#",
+    roles: ["hr"],
     icon: LogOut,
     logout: true,
   },
