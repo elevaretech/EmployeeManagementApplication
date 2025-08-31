@@ -15,7 +15,7 @@ import {
 } from "recharts";
 
 /** Types */
-type TaskStatus = "Upcoming" | "In Progress" | "Completed" | "Pending";
+// type TaskStatus = "Upcoming" | "In Progress" | "Completed" | "Pending";
 
 type Intern = {
   id: string;
@@ -49,9 +49,27 @@ export default function TeamLeadDashboardPage() {
       setInterns(JSON.parse(rawInterns));
     } else {
       const demo: Intern[] = [
-        { id: "i1", name: "Ali Khan", tasksCompleted: 12, tasksPending: 3, performance: 85 },
-        { id: "i2", name: "Sara Ahmed", tasksCompleted: 8, tasksPending: 5, performance: 65 },
-        { id: "i3", name: "John Doe", tasksCompleted: 15, tasksPending: 2, performance: 90 },
+        {
+          id: "i1",
+          name: "Ali Khan",
+          tasksCompleted: 12,
+          tasksPending: 3,
+          performance: 85,
+        },
+        {
+          id: "i2",
+          name: "Sara Ahmed",
+          tasksCompleted: 8,
+          tasksPending: 5,
+          performance: 65,
+        },
+        {
+          id: "i3",
+          name: "John Doe",
+          tasksCompleted: 15,
+          tasksPending: 2,
+          performance: 90,
+        },
       ];
       setInterns(demo);
       localStorage.setItem(TEAM_KEY, JSON.stringify(demo));
@@ -62,8 +80,20 @@ export default function TeamLeadDashboardPage() {
       setProjects(JSON.parse(rawProjects));
     } else {
       const demoProjects: Project[] = [
-        { id: "p1", name: "Elevare Mobile App", progress: 60, leadName: "Ali Raza", teamSize: 3 },
-        { id: "p2", name: "Website Revamp", progress: 35, leadName: "Sara Malik", teamSize: 2 },
+        {
+          id: "p1",
+          name: "Elevare Mobile App",
+          progress: 60,
+          leadName: "Ali Raza",
+          teamSize: 3,
+        },
+        {
+          id: "p2",
+          name: "Website Revamp",
+          progress: 35,
+          leadName: "Sara Malik",
+          teamSize: 2,
+        },
       ];
       setProjects(demoProjects);
       localStorage.setItem(PROJECTS_KEY, JSON.stringify(demoProjects));
@@ -91,18 +121,30 @@ export default function TeamLeadDashboardPage() {
       {/* Top Stats */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl p-6 shadow border">
-          <div className="text-sm text-slate-500 font-semibold">Total Team members</div>
-          <div className="mt-3 text-3xl font-bold text-[#54b7f4]">{totalInterns}</div>
+          <div className="text-sm text-slate-500 font-semibold">
+            Total Team members
+          </div>
+          <div className="mt-3 text-3xl font-bold text-[#54b7f4]">
+            {totalInterns}
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow border">
-          <div className="text-sm text-slate-500 font-semibold">Average Performance</div>
-          <div className="mt-3 text-3xl font-bold text-green-500">{avgPerformance}%</div>
+          <div className="text-sm text-slate-500 font-semibold">
+            Average Performance
+          </div>
+          <div className="mt-3 text-3xl font-bold text-green-500">
+            {avgPerformance}%
+          </div>
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow border">
-          <div className="text-sm text-slate-500 font-semibold">Active Projects</div>
-          <div className="mt-3 text-3xl font-bold text-slate-700">{totalProjects}</div>
+          <div className="text-sm text-slate-500 font-semibold">
+            Active Projects
+          </div>
+          <div className="mt-3 text-3xl font-bold text-slate-700">
+            {totalProjects}
+          </div>
         </div>
       </section>
 
@@ -110,7 +152,9 @@ export default function TeamLeadDashboardPage() {
       <section className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Team Performance Overview */}
         <div className="bg-white rounded-2xl p-6 shadow border">
-          <h3 className="text-lg font-semibold mb-4 text-black">Team Performance</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            Team Performance
+          </h3>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={performanceData}>
               <CartesianGrid strokeDasharray="3 3" />
@@ -124,7 +168,9 @@ export default function TeamLeadDashboardPage() {
 
         {/* Project Progress */}
         <div className="bg-white rounded-2xl p-6 shadow border">
-          <h3 className="text-lg font-semibold mb-4 text-black">Project Progress</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            Project Progress
+          </h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
@@ -145,7 +191,9 @@ export default function TeamLeadDashboardPage() {
 
         {/* Interns Detail List */}
         <div className="bg-white rounded-2xl p-6 shadow border col-span-1 lg:col-span-2">
-          <h3 className="text-lg font-semibold mb-4 text-black">Team Overview</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">
+            Team Overview
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {interns.map((i) => (
               <div key={i.id} className="p-4 border rounded-lg bg-gray-50">
@@ -159,7 +207,9 @@ export default function TeamLeadDashboardPage() {
                     style={{ width: `${i.performance}%` }}
                   ></div>
                 </div>
-                <div className="text-xs text-slate-400 mt-1">Performance: {i.performance}%</div>
+                <div className="text-xs text-slate-400 mt-1">
+                  Performance: {i.performance}%
+                </div>
               </div>
             ))}
           </div>

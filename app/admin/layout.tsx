@@ -15,8 +15,6 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-
-
   return (
     <div className="min-h-screen flex">
       <Sidebar role="admin" />
@@ -25,8 +23,6 @@ export default function AdminLayout({
         {/* <Header title="Internee Dashboard" user={demoUser} /> */}
         <main className="p-6">{children}</main>
       </div>
-      
     </div>
-    
   );
 }
