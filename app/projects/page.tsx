@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 type Project = {
   id: number;
@@ -24,7 +25,7 @@ introduces a dual-mode experience:
 • Tourist Mode: Focused on travel enthusiasts, offering guides, FAQs, and clear calls-to
 action to begin exploring. 
 • Developer Mode: Tailored to technical users, providing access to APIs, documentation, 
-technical FAQs, and developer-focused resources. `    ,
+technical FAQs, and developer-focused resources. `,
     media: ["/projects/wanderblaze.mp4"],
     type: "video",
     category: ["Web", "AI"],
@@ -102,7 +103,8 @@ Created a comprehensive dashboard in Looker Studio to provide real-time insights
   {
     id: 8,
     title: "Supply Chain Optimization",
-    description: "Optimized inventory, shipping, and manufacturing processes using advanced analytics and machine learning (ARIMA). Developed an interactive Power BI dashboard to monitor key metrics, forecast demand, and support data-driven decision-making. Technologies used: Python (Pandas, NumPy), Power BI, Matplotlib, Seaborn.",
+    description:
+      "Optimized inventory, shipping, and manufacturing processes using advanced analytics and machine learning (ARIMA). Developed an interactive Power BI dashboard to monitor key metrics, forecast demand, and support data-driven decision-making. Technologies used: Python (Pandas, NumPy), Power BI, Matplotlib, Seaborn.",
     media: ["/projects/1.jpg"],
     type: "image",
     category: "Data Analysis",
@@ -120,17 +122,20 @@ export default function Projects() {
     selectedCategory === "All"
       ? projects
       : projects.filter((p) =>
-        Array.isArray(p.category)
-          ? p.category.includes(selectedCategory)
-          : p.category === selectedCategory
-      );
+          Array.isArray(p.category)
+            ? p.category.includes(selectedCategory)
+            : p.category === selectedCategory
+        );
   return (
     <div className="bg-gray-50 min-h-screen mt-16">
       {/* Hero Section */}
       <section className="text-center py-24 px-6 bg-gradient-to-r from-[#022f62] to-[#50b4f1] text-white">
-        <h1 className="text-5xl md:text-6xl font-extrabold mb-4">Our Projects</h1>
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-4">
+          Our Projects
+        </h1>
         <p className="max-w-3xl mx-auto text-lg md:text-xl leading-relaxed">
-          Innovative solutions crafted across web, mobile, AI, and data analytics to empower businesses.
+          Innovative solutions crafted across web, mobile, AI, and data
+          analytics to empower businesses.
         </p>
       </section>
 
@@ -140,10 +145,11 @@ export default function Projects() {
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-4 py-2 rounded-full font-semibold transition-colors ${selectedCategory === cat
-              ? "bg-blue-600 text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-blue-100"
-              }`}
+            className={`px-4 py-2 rounded-full font-semibold transition-colors ${
+              selectedCategory === cat
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200 text-gray-700 hover:bg-blue-100"
+            }`}
           >
             {cat}
           </button>
@@ -163,7 +169,7 @@ export default function Projects() {
           >
             <div className="relative w-full h-64 overflow-hidden">
               {project.type === "image" ? (
-                <img
+                <Image
                   src={project.media[0]}
                   alt={project.title}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -171,7 +177,6 @@ export default function Projects() {
               ) : (
                 <video
                   src={project.media[0]}
-
                   loop
                   muted
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -182,8 +187,12 @@ export default function Projects() {
               </span>
             </div>
             <div className="p-6">
-              <h3 className="text-2xl font-bold text-gray-800 mb-3">{project.title}</h3>
-              <p className="text-gray-600 mb-6 line-clamp-3">{project.description}</p>
+              <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                {project.title}
+              </h3>
+              <p className="text-gray-600 mb-6 line-clamp-3">
+                {project.description}
+              </p>
               <span className="text-blue-600 font-semibold">Click to View</span>
             </div>
           </motion.div>
@@ -209,7 +218,7 @@ export default function Projects() {
             >
               <div className="relative w-full h-80 overflow-hidden">
                 {selectedProject.type === "image" ? (
-                  <img
+                  <Image
                     src={selectedProject.media[0]}
                     alt={selectedProject.title}
                     className="w-full h-full object-contain bg-black"
@@ -232,15 +241,18 @@ export default function Projects() {
                 </button>
               </div>
               <div className="p-6">
-                <h2 className="text-3xl font-bold mb-3">{selectedProject.title}</h2>
-                <p className="text-gray-700 mb-4">{selectedProject.description}</p>
+                <h2 className="text-3xl font-bold mb-3">
+                  {selectedProject.title}
+                </h2>
+                <p className="text-gray-700 mb-4">
+                  {selectedProject.description}
+                </p>
                 {selectedProject.techStack && (
                   <p className="mb-4">
                     <span className="font-semibold">Tech Stack:</span>{" "}
                     {selectedProject.techStack.join(", ")}
                   </p>
                 )}
-
               </div>
             </motion.div>
           </motion.div>

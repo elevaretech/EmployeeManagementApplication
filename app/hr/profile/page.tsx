@@ -2,7 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-
+import Image from "next/image";
 type HR = {
   id: string;
   companyId: string;
@@ -57,7 +57,7 @@ export default function HRProfile() {
       {/* HR Info */}
       <div className="bg-white rounded-2xl shadow p-6 mb-6 flex gap-6 items-start">
         {hr.profilePic && (
-          <img
+          <Image
             src={hr.profilePic}
             alt={hr.name}
             className="w-28 h-28 rounded-xl object-cover border shadow-sm"
@@ -81,7 +81,9 @@ export default function HRProfile() {
             <Detail label="Reporting Manager" value={hr.reportingManager} />
             <Detail
               label="Employees Managed"
-              value={hr.employeesManaged ? `${hr.employeesManaged} Employees` : "-"}
+              value={
+                hr.employeesManaged ? `${hr.employeesManaged} Employees` : "-"
+              }
             />
           </div>
         </div>

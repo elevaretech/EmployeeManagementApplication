@@ -2,6 +2,7 @@
 
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 type TeamLead = {
   id: string;
@@ -59,14 +60,16 @@ export default function TeamLeadProfile() {
       {/* Team Lead Info */}
       <div className="bg-white rounded-2xl shadow p-6 mb-6 flex gap-6 items-start">
         {teamLead.profilePic && (
-          <img
+          <Image
             src={teamLead.profilePic}
             alt={teamLead.name}
             className="w-28 h-28 rounded-xl object-cover border shadow-sm"
           />
         )}
         <div className="flex-1">
-          <h1 className="text-2xl font-bold mb-1 text-slate-600">{teamLead.name}</h1>
+          <h1 className="text-2xl font-bold mb-1 text-slate-600">
+            {teamLead.name}
+          </h1>
           <p className="text-gray-700">{teamLead.role}</p>
           <p className="text-sm text-gray-500 mb-4">{teamLead.department}</p>
 
@@ -78,14 +81,20 @@ export default function TeamLeadProfile() {
             <Detail label="CNIC" value={teamLead.cnic} />
             <Detail label="Address" value={teamLead.address} />
             <Detail label="Date of Birth" value={teamLead.dob} />
-            <Detail label="Emergency Contact" value={teamLead.emergencyContact} />
+            <Detail
+              label="Emergency Contact"
+              value={teamLead.emergencyContact}
+            />
             <Detail label="Join Date" value={teamLead.joinDate} />
             <Detail label="Specialization" value={teamLead.specialization} />
             <Detail
               label="Team Size"
               value={teamLead.teamSize ? `${teamLead.teamSize} Members` : "-"}
             />
-            <Detail label="Reporting Manager" value={teamLead.reportingManager} />
+            <Detail
+              label="Reporting Manager"
+              value={teamLead.reportingManager}
+            />
           </div>
         </div>
       </div>
