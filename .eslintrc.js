@@ -1,8 +1,8 @@
 module.exports = {
-  root: true,
-  extends: ['next/core-web-vitals'],
-  rules: {
-    '@typescript-eslint/no-explicit-any': 'off',
-    '@typescript-eslint/ban-ts-comment': 'off',
-  },
+    root: true,
+    extends: ['next/core-web-vitals'],
+    rules: {
+        '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/ban-ts-comment': 'off',
+    },
 }

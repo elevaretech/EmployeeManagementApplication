@@ -133,7 +133,10 @@ function ChartTooltipContent(props: ChartTooltipContentProps) {
         ? config[label as keyof typeof config]?.label || label
         : itemConfig?.label;
 
-    if (labelFormatter && (typeof value === "string" || typeof value === "number")) {
+    if (
+      labelFormatter &&
+      (typeof value === "string" || typeof value === "number")
+    ) {
       return (
         <div className={cn("font-medium", labelClassName)}>
           {labelFormatter(value, payload || [])}
@@ -310,7 +313,10 @@ function getPayloadConfigFromPayload(
 
   let configLabelKey: string = key;
 
-  if (key in payload && typeof payload[key as keyof ChartPayloadItem] === "string") {
+  if (
+    key in payload &&
+    typeof payload[key as keyof ChartPayloadItem] === "string"
+  ) {
     configLabelKey = payload[key as keyof ChartPayloadItem] as string;
   } else if (
     payloadPayload &&
