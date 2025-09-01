@@ -71,7 +71,32 @@ export function ServicesSection() {
         </div>
 
         {/* Service Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-8">
+        <div className="container w-full mx-auto px-4 md:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <Card
+                key={index}
+                className="h-full flex flex-col border-border hover:border-accent/60 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
+              >
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                    <service.icon className="h-6 w-6 text-accent" />
+                  </div>
+                  <CardTitle className="text-xl font-semibold">
+                    {service.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <CardDescription className="text-base leading-relaxed">
+                    {service.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-4 md:px-8">
           {services.map((service, index) => (
             <Card
               key={index}
@@ -92,7 +117,7 @@ export function ServicesSection() {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </div> */}
 
         {/* See More Button */}
         <div className="mt-12 flex justify-center">
