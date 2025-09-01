@@ -12,8 +12,8 @@ export function Footer() {
               <Image
                 src="/logo.png"
                 alt="Elevare Tech"
-                width={48}
-                height={48}
+                width={140}
+                height={40}
                 className="h-12 w-auto"
               />
             </div>
