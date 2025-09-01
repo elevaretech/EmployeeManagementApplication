@@ -60,17 +60,17 @@ export default function Header() {
         </nav>
 
         {/* CTA for Desktop */}
-        <div className="hidden md:flex items-center space-x-3">
+        {/* <div className="hidden md:flex items-center space-x-3">
           <a href="/login">
             <Button className="rounded-xl bg-[#50b6f2] hover:bg-[#022f62] cursor-pointer text-white shadow-md px-5">
               Employee Portal
             </Button>
           </a>
-        </div>
+        </div> */}
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden text-gray-800"
+          className="md:hidden text-gray-800 cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
@@ -83,24 +83,25 @@ export default function Header() {
           isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
-        <nav className="flex flex-col space-y-4 p-6 font-medium bg-white shadow-md border-t">
+        <nav className="flex flex-col items-center space-y-2 p-6 font-medium bg-white shadow-md border-t">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setIsOpen(false)}
-              className="hover:text-[#022f62] transition"
+              className="relative px-4 py-2 cursor-pointer group hover:text-[#022f62] transition-colors"
             >
               {link.label}
+              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-[#50b6f2] transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
 
-          {/* Mobile CTA */}
-          <Link href="/portal" onClick={() => setIsOpen(false)}>
-            <Button className="w-full rounded-xl bg-[#50b6f2] hover:bg-[#022f62] text-white shadow-md">
+          {/* Mobile Employee Portal Button */}
+          {/* <Link href="/login" onClick={() => setIsOpen(false)}>
+            <Button className="w-full rounded-xl bg-[#50b6f2] hover:bg-[#022f62] text-white shadow-md cursor-pointer">
               Employee Portal
             </Button>
-          </Link>
+          </Link> */}
         </nav>
       </div>
     </header>
