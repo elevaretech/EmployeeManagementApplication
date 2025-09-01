@@ -131,10 +131,10 @@ export default function AboutSection() {
         transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
         className="bg-[#f0f7ff] p-8 rounded-xl border-l-4 border-[#50b4f1] mb-16"
       >
-        <h2 className="text-2xl font-semibold text-[#022f62] mb-4">
+        <h2 className="text-2xl font-semibold text-[#022f62] mb-4 text-justify">
           Message from the CEO
         </h2>
-        <p className="text-gray-700 leading-relaxed text-lg">
+        <p className="text-gray-700 leading-relaxed text-lg px-4 md:px-0 text-justify">
           At Elevare Tech, our mission is to empower businesses with
           cutting-edge technology solutions that drive growth, efficiency, and
           innovation. From our humble beginnings, we have always believed that
@@ -152,10 +152,12 @@ export default function AboutSection() {
           <br />
           On behalf of the entire Elevare Tech family, I invite you to explore
           our services and discover how we can partner with you to achieve your
-          goals. Together, let's shape the future of technology.
+          goals. Together, let&apos;s shape the future of technology.
           <br />
           <br />
-          <span className="font-semibold">CEO, Elevare Tech</span>
+          <span className="font-semibold block text-justify">
+            CEO, Elevare Tech
+          </span>
         </p>
       </motion.div>
 
