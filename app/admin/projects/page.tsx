@@ -109,126 +109,208 @@ export default function AdminProjectsPage() {
 
       <button
         onClick={() => setShowForm(true)}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-4"
+        className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-700 mb-4"
       >
         {editProject ? "Edit Project" : "Add New Project"}
       </button>
 
       {showForm && (
-        <form
-          onSubmit={handleFormSubmit}
-          className="bg-white p-6 rounded-2xl shadow mb-6 space-y-4"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-slate-500">
-            <input
-              name="name"
-              defaultValue={editProject?.name || ""}
-              placeholder="Project Name"
-              className="border p-2 rounded w-full text-slate-500"
-              required
-            />
-            <input
-              name="description"
-              defaultValue={editProject?.description || ""}
-              placeholder="Description"
-              className="border p-2 rounded w-full text-slate-500"
-              required
-            />
-            <select
-              name="lead"
-              defaultValue={editProject?.lead.id || ""}
-              className="border p-2 rounded w-full text-slate-500"
-              required
-            >
-              <option value="">Select Team Lead</option>
-              {employees.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.name}
-                </option>
-              ))}
-            </select>
+        <div className="fixed inset-0 bg-black/30 flex justify-center items-start pt-10 z-50">
+          <form
+            onSubmit={handleFormSubmit}
+            className="bg-white p-6 rounded-2xl shadow-lg mb-6 w-full max-w-4xl mx-4 overflow-y-auto max-h-[90vh]"
+          >
+            <h2 className="text-xl font-bold text-gray-700 mb-6">
+              {editProject ? "Edit Project" : "Add New Project"}
+            </h2>
 
-            <select
-              name="teamMembers"
-              multiple
-              required
-              defaultValue={editProject?.teamMembers.map((e) => e.id) || []}
-              className="border p-2 rounded w-full text-slate-500"
-            >
-                <option value="">Select Team Members</option>
-              {employees.map((e) => (
-                <option key={e.id} value={e.id}>
-                  {e.name}
-                </option>
-              ))}
-            </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Project Basic Info */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Project Name*
+                  </label>
+                  <input
+                    name="name"
+                    defaultValue={editProject?.name || ""}
+                    placeholder="Enter project name"
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
 
-            <input
-              type="date"
-              name="startDate"
-              defaultValue={editProject?.startDate || ""}
-              className="border p-2 rounded w-fulltext-slate-500"
-              required
-            />
-            <input
-              type="date"
-              name="endDate"
-              defaultValue={editProject?.endDate || ""}
-              className="border p-2 rounded w-full text-slate-500"
-              required
-            />
-            <select
-              name="status"
-              defaultValue={editProject?.status || "Pending"}
-              className="border p-2 rounded w-full text-slate-500"
-              required
-            >
-              <option value="Ongoing">Ongoing</option>
-              <option value="Completed">Completed</option>
-              <option value="Pending">Pending</option>
-            </select>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description*
+                  </label>
+                  <textarea
+                    name="description"
+                    defaultValue={editProject?.description || ""}
+                    placeholder="Project description"
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24"
+                    required
+                  />
+                </div>
+              </div>
 
-            <input
-              type="number"
-              name="progress"
-              min={0}
-              max={100}
-              defaultValue={editProject?.progress || 0}
-              placeholder="Progress %"
-              className="border p-2 rounded w-full text-slate-500"
-            />
+              {/* Project Team */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Team Lead*
+                  </label>
+                  <select
+                    name="lead"
+                    defaultValue={editProject?.lead.id || ""}
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  >
+                    <option value="">Select Team Lead</option>
+                    {employees.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <select
-              name="priority"
-              defaultValue={editProject?.priority || "Medium"}
-              className="border p-2 rounded w-full text-slate-500"
-              required
-            >
-              <option value="Low">Low</option>
-              <option value="Medium">Medium</option>
-              <option value="High">High</option>
-            </select>
-          </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Team Members*
+                  </label>
+                  <select
+                    name="teamMembers"
+                    multiple
+                    required
+                    defaultValue={
+                      editProject?.teamMembers.map((e) => e.id) || []
+                    }
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24"
+                  >
+                    {employees.map((e) => (
+                      <option key={e.id} value={e.id}>
+                        {e.name}
+                      </option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Hold Ctrl/Cmd to select multiple members
+                  </p>
+                </div>
+              </div>
 
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => {
-                setShowForm(false);
-                setEditProject(null);
-              }}
-              className="px-4 py-2 rounded border bg-gray-400"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
-            >
-              {editProject ? "Update Project" : "Add Project"}
-            </button>
-          </div>
-        </form>
+              {/* Project Timeline */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Start Date*
+                  </label>
+                  <input
+                    type="date"
+                    name="startDate"
+                    defaultValue={editProject?.startDate || ""}
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    End Date*
+                  </label>
+                  <input
+                    type="date"
+                    name="endDate"
+                    defaultValue={editProject?.endDate || ""}
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Project Status */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status*
+                  </label>
+                  <select
+                    name="status"
+                    defaultValue={editProject?.status || "Pending"}
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Ongoing">Ongoing</option>
+                    <option value="Completed">Completed</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Progress
+                  </label>
+                  <input
+                    type="number"
+                    name="progress"
+                    min={0}
+                    max={100}
+                    defaultValue={editProject?.progress || 0}
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                  <div className="mt-2 bg-gray-200 rounded-full h-2">
+                    <div
+                      className={`h-2 rounded-full transition-all ${
+                        (editProject?.progress || 0) < 50
+                          ? "bg-red-500"
+                          : (editProject?.progress || 0) < 80
+                          ? "bg-yellow-400"
+                          : "bg-green-500"
+                      }`}
+                      style={{ width: `${editProject?.progress || 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Priority*
+                  </label>
+                  <select
+                    name="priority"
+                    defaultValue={editProject?.priority || "Medium"}
+                    className="border p-2 rounded-lg w-full text-gray-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditProject(null);
+                }}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              >
+                {editProject ? "Update Project" : "Add Project"}
+              </button>
+            </div>
+          </form>
+        </div>
       )}
 
       <div className="overflow-x-auto">

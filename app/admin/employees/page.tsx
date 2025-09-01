@@ -3,35 +3,36 @@
 import { useEffect, useState } from "react";
 
 type Employee = {
-  id: string;
-  employeeId: string;
+  id?: string;
+  companyId: string;
   name: string;
-  role: "Employee" | "Team Lead" | "HR" | "Admin";
   email: string;
+  password?: string;
+  role: "hr" | "teamlead" | "internee";
   phone?: string;
-  cnic?: string;
-  address?: string;
-  dob?: string;
-  department?: string;
-  joinDate?: string;
-  contractEndDate?: string;
-  specialization?: string;
-  emergencyContact?: string;
+  department: string;
+  joinDate: string;
+  cnic: string;
+  address: string;
+  dob: string;
+  emergencyContact: string;
   profilePic?: string;
+  status: "active" | "inactive";
 };
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
 
   useEffect(() => {
     // ✅ Replace with API call later
     const mockData: Employee[] = [
       {
         id: "1",
-        employeeId: "EMP-101",
+        companyId: "ELV-101",
         name: "Ali Khan",
-        role: "Employee",
+        role: "internee",
         email: "ali.khan@example.com",
         phone: "+92-300-1234567",
         cnic: "35202-1234567-1",
@@ -39,16 +40,15 @@ export default function EmployeesPage() {
         dob: "1992-05-15",
         department: "Development",
         joinDate: "2022-01-10",
-        contractEndDate: "2025-01-09",
-        specialization: "Frontend",
         emergencyContact: "+92-301-7654321",
         profilePic: "/images/employees/ali.jpg",
+        status: "active",
       },
       {
         id: "2",
-        employeeId: "EMP-102",
+        companyId: "ELV-102",
         name: "Sara Ahmed",
-        role: "Team Lead",
+        role: "teamlead",
         email: "sara.ahmed@example.com",
         phone: "+92-300-9876543",
         cnic: "35202-9876543-1",
@@ -56,10 +56,9 @@ export default function EmployeesPage() {
         dob: "1990-11-10",
         department: "Development",
         joinDate: "2020-03-15",
-        contractEndDate: "2024-03-14",
-        specialization: "Full-Stack",
         emergencyContact: "+92-301-4567890",
         profilePic: "/images/employees/sara.jpg",
+        status: "active",
       },
     ];
     setEmployees(mockData);
@@ -82,7 +81,15 @@ export default function EmployeesPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-700 mb-4">Manage Employees</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-700">Manage Employees</h1>
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors"
+        >
+          Add Employee
+        </button>
+      </div>
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -90,27 +97,38 @@ export default function EmployeesPage() {
           <thead className="bg-gray-100 text-gray-700">
             <tr>
               <th className="px-4 py-2 text-left">#</th>
-              <th className="px-4 py-2 text-left">Employee ID</th>
+              <th className="px-4 py-2 text-left">Company ID</th>
               <th className="px-4 py-2 text-left">Name</th>
               <th className="px-4 py-2 text-left">Role</th>
               <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Phone</th>
               <th className="px-4 py-2 text-left">Department</th>
-              <th className="px-4 py-2 text-left">Join Date</th>
+              <th className="px-4 py-2 text-left">Status</th>
               <th className="px-4 py-2 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             {employees.map((emp, idx) => (
-              <tr key={emp.id} className="border-b border-gray-200 hover:bg-gray-50">
+              <tr
+                key={emp.id}
+                className="border-b border-gray-200 hover:bg-gray-50"
+              >
                 <td className="px-4 py-2">{idx + 1}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.employeeId}</td>
+                <td className="px-4 py-2 text-gray-800">{emp.companyId}</td>
                 <td className="px-4 py-2 text-gray-800">{emp.name}</td>
                 <td className="px-4 py-2 text-gray-800">{emp.role}</td>
                 <td className="px-4 py-2 text-gray-800">{emp.email}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.phone}</td>
                 <td className="px-4 py-2 text-gray-800">{emp.department}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.joinDate}</td>
+                <td className="px-4 py-2">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      emp.status === "active"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {emp.status}
+                  </span>
+                </td>
                 <td className="px-4 py-2 flex gap-2">
                   <button
                     className="text-blue-600 hover:underline"
@@ -128,29 +146,58 @@ export default function EmployeesPage() {
         </table>
       </div>
 
-      {/* Edit Modal */}
-      {editingEmployee && (
-        <EditEmployeeModal
+      {/* Add/Edit Modal */}
+      {(showAddForm || editingEmployee) && (
+        <EmployeeFormModal
           employee={editingEmployee}
-          onClose={closeEdit}
-          onSave={handleSave}
+          onClose={() => {
+            setShowAddForm(false);
+            setEditingEmployee(null);
+          }}
+          onSave={(employee) => {
+            if (editingEmployee) {
+              handleSave(employee);
+            } else {
+              setEmployees((prev) => [
+                ...prev,
+                { ...employee, id: Date.now().toString() },
+              ]);
+              setShowAddForm(false);
+            }
+          }}
         />
       )}
     </div>
   );
 }
 
-/* Modal Form for Editing Employee */
-function EditEmployeeModal({
+/* Modal Form for Adding/Editing Employee */
+function EmployeeFormModal({
   employee,
   onClose,
   onSave,
 }: {
-  employee: Employee;
+  employee: Employee | null;
   onClose: () => void;
-  onSave: (updated: Employee) => void;
+  onSave: (employee: Employee) => void;
 }) {
-  const [formData, setFormData] = useState<Employee>({ ...employee });
+  const [formData, setFormData] = useState<Employee>(
+    employee || {
+      companyId: "",
+      name: "",
+      email: "",
+      password: "",
+      role: "internee",
+      phone: "",
+      department: "",
+      joinDate: new Date().toISOString().split("T")[0],
+      cnic: "",
+      address: "",
+      dob: "",
+      emergencyContact: "",
+      status: "active",
+    }
+  );
 
   const handleChange = (field: keyof Employee, value: string) => {
     setFormData({ ...formData, [field]: value });
@@ -159,12 +206,14 @@ function EditEmployeeModal({
   return (
     <div className="fixed inset-0 bg-black/30 flex justify-center items-start pt-20 z-50">
       <div className="bg-white p-6 rounded-2xl w-full max-w-3xl shadow-lg overflow-y-auto max-h-[90vh]">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">Edit Employee</h2>
+        <h2 className="text-xl font-bold text-gray-700 mb-4">
+          {employee ? "Edit Employee" : "Add New Employee"}
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
           <InputField
-            label="Employee ID"
-            value={formData.employeeId}
-            onChange={(val) => handleChange("employeeId", val)}
+            label="Company ID"
+            value={formData.companyId}
+            onChange={(val) => handleChange("companyId", val)}
           />
           <InputField
             label="Name"
@@ -172,16 +221,41 @@ function EditEmployeeModal({
             onChange={(val) => handleChange("name", val)}
           />
           <InputField
+            label="Email"
+            value={formData.email}
+            onChange={(val) => handleChange("email", val)}
+            type="email"
+          />
+          {!employee && (
+            <InputField
+              label="Password"
+              value={formData.password || ""}
+              onChange={(val) => handleChange("password", val)}
+              type="password"
+            />
+          )}
+          <InputField
             label="Role"
             value={formData.role}
             onChange={(val) => handleChange("role", val)}
             type="select"
-            options={["Employee", "Team Lead", "HR", "Admin"]}
+            options={["hr", "teamlead", "internee"]}
           />
           <InputField
-            label="Email"
-            value={formData.email}
-            onChange={(val) => handleChange("email", val)}
+            label="Department"
+            value={formData.department}
+            onChange={(val) => handleChange("department", val)}
+          />
+          <InputField
+            label="Join Date"
+            value={formData.joinDate}
+            onChange={(val) => handleChange("joinDate", val)}
+            type="date"
+          />
+          <InputField
+            label="CNIC"
+            value={formData.cnic}
+            onChange={(val) => handleChange("cnic", val)}
           />
           <InputField
             label="Phone"
@@ -189,47 +263,27 @@ function EditEmployeeModal({
             onChange={(val) => handleChange("phone", val)}
           />
           <InputField
-            label="CNIC"
-            value={formData.cnic || ""}
-            onChange={(val) => handleChange("cnic", val)}
-          />
-          <InputField
             label="Address"
-            value={formData.address || ""}
+            value={formData.address}
             onChange={(val) => handleChange("address", val)}
           />
           <InputField
-            label="DOB"
-            value={formData.dob || ""}
+            label="Date of Birth"
+            value={formData.dob}
             onChange={(val) => handleChange("dob", val)}
             type="date"
           />
           <InputField
-            label="Department"
-            value={formData.department || ""}
-            onChange={(val) => handleChange("department", val)}
-          />
-          <InputField
-            label="Join Date"
-            value={formData.joinDate || ""}
-            onChange={(val) => handleChange("joinDate", val)}
-            type="date"
-          />
-          <InputField
-            label="Contract End Date"
-            value={formData.contractEndDate || ""}
-            onChange={(val) => handleChange("contractEndDate", val)}
-            type="date"
-          />
-          <InputField
-            label="Specialization"
-            value={formData.specialization || ""}
-            onChange={(val) => handleChange("specialization", val)}
-          />
-          <InputField
             label="Emergency Contact"
-            value={formData.emergencyContact || ""}
+            value={formData.emergencyContact}
             onChange={(val) => handleChange("emergencyContact", val)}
+          />
+          <InputField
+            label="Status"
+            value={formData.status}
+            onChange={(val) => handleChange("status", val)}
+            type="select"
+            options={["active", "inactive"]}
           />
         </div>
 
@@ -263,7 +317,7 @@ function InputField({
   label: string;
   value: string;
   onChange: (val: string) => void;
-  type?: "text" | "date" | "select";
+  type?: "text" | "date" | "select" | "email" | "password";
   options?: string[];
 }) {
   return (
