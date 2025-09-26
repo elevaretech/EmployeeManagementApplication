@@ -1,13 +1,12 @@
 "use client";
+import { useState, useEffect } from "react";
 
-import { useEffect, useState } from "react";
-
-type Employee = {
-  id?: string;
+interface Employee {
+  id?: number;
   companyId: string;
   name: string;
   email: string;
-  password?: string;
+  password: string;
   role: "hr" | "teamlead" | "internee";
   phone?: string;
   department: string;
@@ -18,330 +17,371 @@ type Employee = {
   emergencyContact: string;
   profilePic?: string;
   status: "active" | "inactive";
-};
+}
 
-export default function EmployeesPage() {
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/users";
+
+export default function EmployeePage() {
   const [employees, setEmployees] = useState<Employee[]>([]);
-  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
-
-  useEffect(() => {
-    // ✅ Replace with API call later
-    const mockData: Employee[] = [
-      {
-        id: "1",
-        companyId: "ELV-101",
-        name: "Ali Khan",
-        role: "internee",
-        email: "ali.khan@example.com",
-        phone: "+92-300-1234567",
-        cnic: "35202-1234567-1",
-        address: "Street 12, Lahore",
-        dob: "1992-05-15",
-        department: "Development",
-        joinDate: "2022-01-10",
-        emergencyContact: "+92-301-7654321",
-        profilePic: "/images/employees/ali.jpg",
-        status: "active",
-      },
-      {
-        id: "2",
-        companyId: "ELV-102",
-        name: "Sara Ahmed",
-        role: "teamlead",
-        email: "sara.ahmed@example.com",
-        phone: "+92-300-9876543",
-        cnic: "35202-9876543-1",
-        address: "Gulberg III, Lahore",
-        dob: "1990-11-10",
-        department: "Development",
-        joinDate: "2020-03-15",
-        emergencyContact: "+92-301-4567890",
-        profilePic: "/images/employees/sara.jpg",
-        status: "active",
-      },
-    ];
-    setEmployees(mockData);
-  }, []);
-
-  const openEdit = (employee: Employee) => {
-    setEditingEmployee(employee);
-  };
+  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const closeEdit = () => {
     setEditingEmployee(null);
   };
 
-  const handleSave = (updated: Employee) => {
-    setEmployees((prev) =>
-      prev.map((emp) => (emp.id === updated.id ? updated : emp))
-    );
-    closeEdit();
+  useEffect(() => {
+    const fetchEmployees = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${API_URL}`);
+        const data = await response.json();
+        // Ensure data is an array before setting it
+        if (Array.isArray(data)) {
+          setEmployees(data);
+        } else if (data && typeof data === "object") {
+          // If data is an object with nested employees array
+          const employeesArray = data.users || data.data || [];
+          setEmployees(employeesArray);
+        } else {
+          console.error("Received invalid data format:", data);
+          setEmployees([]);
+        }
+      } catch (error) {
+        console.error("Failed to fetch employees:", error);
+        setEmployees([]); // Set empty array on error
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchEmployees();
+  }, []);
+
+  const handleSave = async (employee: Employee) => {
+    try {
+      const url = `${API_URL}${employee.id ? `/${employee.id}` : ""}`;
+      const method = employee.id ? "PUT" : "POST";
+
+      // Add default values for required fields
+      const employeeData = {
+        ...employee,
+        status: employee.status || "active",
+        joinDate: employee.joinDate || new Date().toISOString().split("T")[0],
+      };
+
+      console.log("Sending data:", employeeData);
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(employeeData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => null);
+        console.error("Error response:", errorData);
+        throw new Error(errorData?.message || "Failed to save employee");
+      }
+
+      const savedEmployee = await response.json();
+
+      setEmployees((prev) =>
+        employee.id
+          ? prev.map((emp) =>
+              emp.id === savedEmployee.id ? savedEmployee : emp
+            )
+          : [...prev, savedEmployee]
+      );
+
+      closeEdit();
+      setShowAddForm(false);
+    } catch (error) {
+      console.error("Failed to save employee:", error);
+      // Handle error (show error message to user)
+    }
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-700">Manage Employees</h1>
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold">Employees</h1>
         <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
           onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg cursor-pointer hover:bg-blue-700 transition-colors"
         >
           Add Employee
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 rounded-lg">
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              <th className="px-4 py-2 text-left">#</th>
-              <th className="px-4 py-2 text-left">Company ID</th>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Role</th>
-              <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Department</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {employees.map((emp, idx) => (
-              <tr
-                key={emp.id}
-                className="border-b border-gray-200 hover:bg-gray-50"
-              >
-                <td className="px-4 py-2">{idx + 1}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.companyId}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.name}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.role}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.email}</td>
-                <td className="px-4 py-2 text-gray-800">{emp.department}</td>
-                <td className="px-4 py-2">
+      {/* Employee List */}
+      <div className="grid gap-4">
+        {isLoading ? (
+          <div className="text-center py-4">Loading...</div>
+        ) : employees.length === 0 ? (
+          <div className="text-center py-4 text-gray-500">
+            No employees found
+          </div>
+        ) : (
+          employees.map((employee) => (
+            <div
+              key={employee.id}
+              className="border p-4 rounded shadow-sm flex justify-between items-center"
+            >
+              <div className="flex-grow">
+                <div className="flex items-center gap-4">
+                  <h3 className="font-semibold">{employee.name}</h3>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${
-                      emp.status === "active"
+                    className={`px-2 py-1 rounded text-xs ${
+                      employee.status === "active"
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {emp.status}
+                    {employee.status}
                   </span>
-                </td>
-                <td className="px-4 py-2 flex gap-2">
-                  <button
-                    className="text-blue-600 hover:underline"
-                    onClick={() => openEdit(emp)}
-                  >
-                    Edit
-                  </button>
-                  <button className="text-red-600 hover:underline">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+                <p className="text-gray-600">{employee.email}</p>
+                <p className="text-sm text-gray-500">
+                  {employee.role} - {employee.department}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Joined: {new Date(employee.joinDate).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  className="text-blue-500 hover:text-blue-700"
+                  onClick={() => setEditingEmployee(employee)}
+                >
+                  Edit
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
-      {/* Add/Edit Modal */}
+      {/* Add/Edit Form Modal */}
       {(showAddForm || editingEmployee) && (
-        <EmployeeFormModal
-          employee={editingEmployee}
-          onClose={() => {
-            setShowAddForm(false);
-            setEditingEmployee(null);
-          }}
-          onSave={(employee) => {
-            if (editingEmployee) {
-              handleSave(employee);
-            } else {
-              setEmployees((prev) => [
-                ...prev,
-                { ...employee, id: Date.now().toString() },
-              ]);
-              setShowAddForm(false);
-            }
-          }}
-        />
-      )}
-    </div>
-  );
-}
-
-/* Modal Form for Adding/Editing Employee */
-function EmployeeFormModal({
-  employee,
-  onClose,
-  onSave,
-}: {
-  employee: Employee | null;
-  onClose: () => void;
-  onSave: (employee: Employee) => void;
-}) {
-  const [formData, setFormData] = useState<Employee>(
-    employee || {
-      companyId: "",
-      name: "",
-      email: "",
-      password: "",
-      role: "internee",
-      phone: "",
-      department: "",
-      joinDate: new Date().toISOString().split("T")[0],
-      cnic: "",
-      address: "",
-      dob: "",
-      emergencyContact: "",
-      status: "active",
-    }
-  );
-
-  const handleChange = (field: keyof Employee, value: string) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
-  return (
-    <div className="fixed inset-0 bg-black/30 flex justify-center items-start pt-20 z-50">
-      <div className="bg-white p-6 rounded-2xl w-full max-w-3xl shadow-lg overflow-y-auto max-h-[90vh]">
-        <h2 className="text-xl font-bold text-gray-700 mb-4">
-          {employee ? "Edit Employee" : "Add New Employee"}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
-          <InputField
-            label="Company ID"
-            value={formData.companyId}
-            onChange={(val) => handleChange("companyId", val)}
-          />
-          <InputField
-            label="Name"
-            value={formData.name}
-            onChange={(val) => handleChange("name", val)}
-          />
-          <InputField
-            label="Email"
-            value={formData.email}
-            onChange={(val) => handleChange("email", val)}
-            type="email"
-          />
-          {!employee && (
-            <InputField
-              label="Password"
-              value={formData.password || ""}
-              onChange={(val) => handleChange("password", val)}
-              type="password"
-            />
-          )}
-          <InputField
-            label="Role"
-            value={formData.role}
-            onChange={(val) => handleChange("role", val)}
-            type="select"
-            options={["hr", "teamlead", "internee"]}
-          />
-          <InputField
-            label="Department"
-            value={formData.department}
-            onChange={(val) => handleChange("department", val)}
-          />
-          <InputField
-            label="Join Date"
-            value={formData.joinDate}
-            onChange={(val) => handleChange("joinDate", val)}
-            type="date"
-          />
-          <InputField
-            label="CNIC"
-            value={formData.cnic}
-            onChange={(val) => handleChange("cnic", val)}
-          />
-          <InputField
-            label="Phone"
-            value={formData.phone || ""}
-            onChange={(val) => handleChange("phone", val)}
-          />
-          <InputField
-            label="Address"
-            value={formData.address}
-            onChange={(val) => handleChange("address", val)}
-          />
-          <InputField
-            label="Date of Birth"
-            value={formData.dob}
-            onChange={(val) => handleChange("dob", val)}
-            type="date"
-          />
-          <InputField
-            label="Emergency Contact"
-            value={formData.emergencyContact}
-            onChange={(val) => handleChange("emergencyContact", val)}
-          />
-          <InputField
-            label="Status"
-            value={formData.status}
-            onChange={(val) => handleChange("status", val)}
-            type="select"
-            options={["active", "inactive"]}
-          />
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg w-full max-w-md overflow-y-auto max-h-[90vh]">
+            <h2 className="text-xl font-bold mb-4">
+              {editingEmployee ? "Edit Employee" : "Add Employee"}
+            </h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const employee: Employee = {
+                  companyId: formData.get("companyId") as string,
+                  name: formData.get("name") as string,
+                  email: formData.get("email") as string,
+                  password: formData.get("password") as string,
+                  role: formData.get("role") as "hr" | "teamlead" | "internee",
+                  phone: formData.get("phone") as string,
+                  department: formData.get("department") as string,
+                  joinDate: formData.get("joinDate") as string,
+                  cnic: formData.get("cnic") as string,
+                  address: formData.get("address") as string,
+                  dob: formData.get("dob") as string,
+                  emergencyContact: formData.get("emergencyContact") as string,
+                  status: formData.get("status") as "active" | "inactive",
+                };
+                if (editingEmployee?.id) {
+                  employee.id = editingEmployee.id;
+                }
+                handleSave(employee);
+              }}
+            >
+              <div className="grid gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Company ID*
+                  </label>
+                  <input
+                    name="companyId"
+                    type="text"
+                    required
+                    defaultValue={editingEmployee?.companyId}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Name*
+                  </label>
+                  <input
+                    name="name"
+                    type="text"
+                    required
+                    defaultValue={editingEmployee?.name}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Email*
+                  </label>
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    defaultValue={editingEmployee?.email}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                {!editingEmployee && (
+                  <div>
+                    <label className="block text-sm font-medium mb-1">
+                      Password*
+                    </label>
+                    <input
+                      name="password"
+                      type="password"
+                      required={!editingEmployee}
+                      className="w-full p-2 border rounded"
+                    />
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Role*
+                  </label>
+                  <select
+                    name="role"
+                    required
+                    defaultValue={editingEmployee?.role}
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="">Select Role</option>
+                    <option value="hr">HR</option>
+                    <option value="teamlead">Team Lead</option>
+                    <option value="internee">Internee</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Phone
+                  </label>
+                  <input
+                    name="phone"
+                    type="tel"
+                    defaultValue={editingEmployee?.phone}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Department*
+                  </label>
+                  <input
+                    name="department"
+                    type="text"
+                    required
+                    defaultValue={editingEmployee?.department}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Join Date*
+                  </label>
+                  <input
+                    name="joinDate"
+                    type="date"
+                    required
+                    defaultValue={editingEmployee?.joinDate?.split("T")[0]}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    CNIC*
+                  </label>
+                  <input
+                    name="cnic"
+                    type="text"
+                    required
+                    defaultValue={editingEmployee?.cnic}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Address*
+                  </label>
+                  <textarea
+                    name="address"
+                    required
+                    defaultValue={editingEmployee?.address}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Date of Birth*
+                  </label>
+                  <input
+                    name="dob"
+                    type="date"
+                    required
+                    defaultValue={editingEmployee?.dob?.split("T")[0]}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Emergency Contact*
+                  </label>
+                  <input
+                    name="emergencyContact"
+                    type="tel"
+                    required
+                    defaultValue={editingEmployee?.emergencyContact}
+                    className="w-full p-2 border rounded"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Status*
+                  </label>
+                  <select
+                    name="status"
+                    required
+                    defaultValue={editingEmployee?.status || "active"}
+                    className="w-full p-2 border rounded"
+                  >
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 mt-4">
+                <button
+                  type="button"
+                  className="px-4 py-2 border rounded"
+                  onClick={() => {
+                    setShowAddForm(false);
+                    closeEdit();
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-
-        <div className="mt-6 flex justify-end gap-3">
-          <button
-            className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-            onClick={() => onSave(formData)}
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* Small reusable input component */
-function InputField({
-  label,
-  value,
-  onChange,
-  type = "text",
-  options,
-}: {
-  label: string;
-  value: string;
-  onChange: (val: string) => void;
-  type?: "text" | "date" | "select" | "email" | "password";
-  options?: string[];
-}) {
-  return (
-    <div className="flex flex-col">
-      <label className="text-gray-600 text-sm mb-1">{label}</label>
-      {type === "select" ? (
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        >
-          {options?.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type={type}
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-blue-500"
-        />
       )}
     </div>
   );
